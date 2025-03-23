@@ -1,0 +1,20 @@
+Machine1.RawMaterial.Property1 (11.54, 12.9, 12.59, 12.22)
+Machine1.RawMaterial.Property2 (200, 215, 236, 201)
+Machine1.RawMaterial.Property3 (1027.43, 980.53, 601.11, 1048.06)
+Machine1.RawMaterial.Property4 (247, 251, 257, 252)
+
+Machine2.RawMaterial.Property1 (12.59, 12.85)
+Machine2.RawMaterial.Property2 (236, 241)
+Machine2.RawMaterial.Property3 (601.11, 556.7)
+Machine2.RawMaterial.Property4 (257, 256)
+
+Machine3.RawMaterial.Property1 (9.02, 9.86, 8.83)
+Machine3.RawMaterial.Property2 (186, 192, 221)
+Machine3.RawMaterial.Property3 (421.16, 408.97, 433.18)
+Machine3.RawMaterial.Property4 (200, 202, 205)
+
+
+Stage2.Output.Measurement0.U.Actual (>= 0)
+
+
+
