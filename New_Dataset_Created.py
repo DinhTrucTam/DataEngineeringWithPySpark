@@ -10,7 +10,7 @@ end_time = datetime(2019, 3, 6, 23, 59, 59)  # "3/6/2019 11:59:59 PM"
 # Generate the time stamps every second
 time_stamps = pd.date_range(start=start_time, end=end_time, freq='S')
 # Define the file path
-file_path = r'C:\Users\HP\Downloads\continuous_factory_process.csv'
+file_path = r'continuous_factory_process.csv'  # Replace with your file path
 
 
 # Step 2: Generate new data for each column based on min/max values
@@ -135,8 +135,26 @@ machine_raw_materials = {
 }
 
 for i, (column, (min_val, max_val)) in enumerate(min_max_values.items()):
-    # Check if the column follows the Stage<x>.Output.Measurement<y>.U.Actual pattern
-    if re.match(r"^Stage1\.Output\.Measurement\d+\.U\.Actual$", column):
+        # Handling for machine raw materials
+    # Apply rules for Machine1, Machine2, and Machine3
+    if re.match(r"^Machine\d+\.RawMaterial\.Property\d+$", column):
+        machine_number, property_number = re.findall(r"Machine(\d+)\.RawMaterial\.Property(\d+)", column)[0]
+        machine_number = int(machine_number)
+        property_number = int(property_number)
+
+        # Retrieve the corresponding raw material properties for the machine
+        machine_data = machine_raw_materials[f"Machine{machine_number}"]
+        property_values = machine_data[f"Property{property_number}"]
+
+        # Randomly select values for each timestamp without repetition
+        # Randomly sample from the available property values for each timestamp
+        sampled_values = np.random.choice(property_values, size=len(time_stamps), replace=True)
+
+        # Store the generated values in the dictionary
+        new_data[column] = sampled_values
+        
+    # Check if the column follows the Stage1.Output.Measurement<y>.U.Actual pattern
+    elif re.match(r"^Stage1\.Output\.Measurement\d+\.U\.Actual$", column):
         # Find the "Setpoint" column that follows the current column
         if i + 1 < len(min_max_values):
             next_column = list(min_max_values.keys())[i + 1]
@@ -175,6 +193,7 @@ for i, (column, (min_val, max_val)) in enumerate(min_max_values.items()):
         # Store the generated values in the dictionary
         new_data[column] = combined_values
 
+    # Check if the column follows the Stage2.Output.Measurement<y>.U.Actual pattern
     elif re.match(r"^Stage2\.Output\.Measurement\d+\.U\.Actual$", column):
 
         # Find the "Setpoint" column that follows the current column
@@ -182,7 +201,7 @@ for i, (column, (min_val, max_val)) in enumerate(min_max_values.items()):
             next_column = list(min_max_values.keys())[i + 1]
             if "Setpoint" in next_column:  # Confirm that it's a Setpoint column
                 setpoint_max_val = min_max_values[next_column][1]  # Get max value of the next Setpoint column
-                upper_limit = setpoint_max_val + 5  # Add 5 to the max value of the Setpoint column
+                upper_limit = setpoint_max_val + 8  # Add 5 to the max value of the Setpoint column
             else:
                 upper_limit = max_val + 5  # Default to current column's max value if no Setpoint column is found
         else:
@@ -237,24 +256,6 @@ for i, (column, (min_val, max_val)) in enumerate(min_max_values.items()):
     # For columns where the min value is >= 0, generate uniformly
     else:
         new_data[column] = np.random.uniform(min_val, max_val, len(time_stamps))
-
-    # Handling for machine raw materials
-    # Apply rules for Machine1, Machine2, and Machine3
-    if re.match(r"^Machine\d+\.RawMaterial\.Property\d+$", column):
-        machine_number, property_number = re.findall(r"Machine(\d+)\.RawMaterial\.Property(\d+)", column)[0]
-        machine_number = int(machine_number)
-        property_number = int(property_number)
-
-        # Retrieve the corresponding raw material properties for the machine
-        machine_data = machine_raw_materials[f"Machine{machine_number}"]
-        property_values = machine_data[f"Property{property_number}"]
-
-        # Randomly select values for each timestamp without repetition
-        # Randomly sample from the available property values for each timestamp
-        sampled_values = np.random.choice(property_values, size=len(time_stamps), replace=True)
-
-        # Store the generated values in the dictionary
-        new_data[column] = sampled_values
 
 # At this point, `new_data` will have the adjusted synthetic data for all columns, including the machine raw material properties.
 

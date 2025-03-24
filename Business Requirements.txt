@@ -1,0 +1,4 @@
+1. Predicting the best time to put machines into maintenance mode
+2. Analyzing and pointing out the duration when machines operate at their best performance.
+3. Detecting abnormal signs throughout the manufactoring process.
+4. Optimizing parameters to increase the overall performance of the manufacturing process.

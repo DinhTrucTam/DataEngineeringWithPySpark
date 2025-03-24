@@ -2,7 +2,7 @@ import pandas as pd
 import re
 
 # Load the CSV file
-file_path = r'C:\Users\HP\Downloads\continuous_factory_process.csv'  # Replace with your file path
+file_path = r'continuous_factory_process.csv'  # Replace with your file path
 df = pd.read_csv(file_path)
 # Define the regular expression pattern to match the column format
 pattern = r"^Stage\d+\.Output\.Measurement\d+\.U\.Actual$"
