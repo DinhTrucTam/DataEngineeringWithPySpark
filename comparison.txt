@@ -16,5 +16,9 @@ Machine3.RawMaterial.Property4 (200, 202, 205)
 
 Stage2.Output.Measurement0.U.Actual (>= 0)
 
+Stage1.Output.Measurement<0-13>.U.Setpoint (-0.5 to max)
+Stage1.Output.Measurement14.U.Setpoint (5% of data will be from min to 0, 95% of data will be from 0 to max)
+
+
 
 
