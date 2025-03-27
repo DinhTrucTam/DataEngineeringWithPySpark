@@ -27,7 +27,7 @@ missing_counts = df.select([
 print("Missing Values:")
 missing_counts.show()
 
-# Data Cleaning
+# Data Cleaning 
 # Convert time_stamp to TimestampType
 df = df.withColumn("time_stamp", col("time_stamp").cast(TimestampType()))
 
