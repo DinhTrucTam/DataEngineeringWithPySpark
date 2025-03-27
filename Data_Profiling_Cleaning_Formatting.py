@@ -6,7 +6,7 @@ from pyspark.sql.types import TimestampType
 spark = SparkSession.builder.appName("DataProfiling").getOrCreate()
 
 # Load dataset
-file_path = "continuous_factory_process.csv"
+file_path = "generated_data_1.csv"
 df = spark.read.csv(file_path, header=True, inferSchema=True)
 
 # Replace dots in column names with underscores
@@ -66,4 +66,4 @@ print("Sample Data After Cleaning:")
 df.show(5)
 
 # Save cleaned data
-df.write.csv("cleaned_continuous_factory_process.csv", header=True, mode="overwrite")
+df.write.csv("cleaned_continuous_factory_process_gen_data.csv", header=True, mode="overwrite")
