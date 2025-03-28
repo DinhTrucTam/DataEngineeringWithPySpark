@@ -1,12 +1,12 @@
 from pyspark.sql import SparkSession
-from pyspark.sql.functions import col, when, count, isnan, mean, stddev, lit
+from pyspark.sql.functions import col, when, count, isnan, mean, stddev, lit, round
 from pyspark.sql.types import TimestampType
 
 # Initialize Spark session
 spark = SparkSession.builder.appName("DataProfiling").getOrCreate()
 
 # Load dataset
-file_path = "generated_data_1.csv"
+file_path = "generated_data.csv"
 df = spark.read.csv(file_path, header=True, inferSchema=True)
 
 # Replace dots in column names with underscores
@@ -27,7 +27,7 @@ missing_counts = df.select([
 print("Missing Values:")
 missing_counts.show()
 
-# Data Cleaning 
+# Data Cleaning
 # Convert time_stamp to TimestampType
 df = df.withColumn("time_stamp", col("time_stamp").cast(TimestampType()))
 
@@ -57,6 +57,9 @@ mean_values = {k: v for k, v in mean_values.items() if v is not None}
 if mean_values:
     df = df.fillna(mean_values)
 
+# Round real number values to 2 decimal places
+for column in numeric_columns:
+    df = df.withColumn(column, round(col(column), 2))
 
 # Data Validation
 print("Cleaned Data Schema:")
@@ -66,4 +69,4 @@ print("Sample Data After Cleaning:")
 df.show(5)
 
 # Save cleaned data
-df.write.csv("cleaned_continuous_factory_process_gen_data.csv", header=True, mode="overwrite")
+df.write.csv("cleaned_dataset.csv", header=True, mode="overwrite")
