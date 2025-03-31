@@ -1,10 +1,6 @@
-import pandas as pd
+import pyspark
+from pyspark.sql import SparkSession
 
-# Load the dataset
-df = pd.read_excel("generated_data.xlsx")
-
-# Display basic information
-print(df.info())
-
-# Show the first few rows
-print(df.head())
+spark = SparkSession.builder.appName('Dataframe').getOrCreate()
+df_pyspark = spark.read.csv('data_generated.csv', header=True, inferSchema=True)
+df_pyspark.printSchema()
