@@ -115,5 +115,9 @@ for i, (column, (min_val, max_val)) in enumerate(min_max_values.items()):
 
 new_data_df = pd.DataFrame(new_data)
 new_data_df['time_stamp'] = time_stamps
+
+# Add a "No." column at the beginning of the dataset
+new_data_df.insert(0, 'No', range(1, len(new_data_df) + 1))
+
 new_data_df.to_csv('data_generated.csv', index=False)
 print("Data saved to 'data_generated.csv'.")
