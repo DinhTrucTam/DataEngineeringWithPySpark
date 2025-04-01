@@ -268,6 +268,7 @@ df_first_stage_operation = df_sample.select(
         col("Machine2_ExitZone_Temperature_Actual") +
         col("Machine3_ExitZone_Temperature_Actual")).alias("avg_exit_zone_temp")
 )
+df_first_stage_operation.write.jdbc(pg_url, "Fact_Stage1_Operation", mode="append", properties=pg_properties)
 
 # Loading Fact - Stage 1 - Output
 df_first_stage_output = df_sample.select(
@@ -312,6 +313,7 @@ df_first_stage_output = df_sample.select(
         col("Stage1_Output_Setpoint13_U_Actual") +
         col("Stage1_Output_Setpoint14_U_Actual")).alias("avg_setpoint"),
 )
+df_first_stage_output.write.jdbc(pg_url, "Fact_Stage1_Output", mode="append", properties=pg_properties)
 
 # Loading Fact - Stage 2 - Operation
 df_second_stage_operation = df_sample.select(
@@ -342,9 +344,10 @@ df_second_stage_operation = df_sample.select(
     avg(col("Machine4_ExitTemperature_U_Actual") +
         col("Machine5_ExitTemperature_U_Actual")).alias("avg_exit_temperature")
 )
+df_second_stage_operation.write.jdbc(pg_url, "Fact_Stage2_Operation", mode="append", properties=pg_properties)
 
-# Loading Fact - Stage 1 - Output
-df_first_stage_output = df_sample.select(
+# Loading Fact - Stage 2 - Output
+df_second_stage_output = df_sample.select(
     monotonically_increasing_id().alias("time_id"),  
     
     monotonically_increasing_id().alias("ambient_id"), 
@@ -386,5 +389,6 @@ df_first_stage_output = df_sample.select(
         col("Stage2_Output_Setpoint13_U_Actual") +
         col("Stage2_Output_Setpoint14_U_Actual")).alias("avg_setpoint"),
 )
+df_second_stage_output.write.jdbc(pg_url, "Fact_Stage2_Output", mode="append", properties=pg_properties)
 
 print("Single record inserted into PostgreSQL for verification.")
