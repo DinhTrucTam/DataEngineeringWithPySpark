@@ -227,6 +227,7 @@ df_second_stage_setpoint = df_sample.select(
 )
 df_second_stage_setpoint.write.jdbc(pg_url, "Dim_Second_Stage_Setpoint", mode="append", properties=pg_properties)
 
+
 ## Loading fact tables
 # Loading Fact - Stage 1 - Operation
 df_first_stage_operation = df_sample.select(
@@ -254,7 +255,7 @@ df_first_stage_operation = df_sample.select(
 
     avg(col("Machine1_MotorRPM_U_Actual") + 
         col("Machine2_MotorRPM_U_Actual") + 
-        col("Machine3_MotorRPM_U_Actual")).alias("avg_moto r_rpm"),
+        col("Machine3_MotorRPM_U_Actual")).alias("avg_motor_rpm"),
     
     avg(col("Machine1_Material_Pressure_Actual") +
         col("Machine2_Material_Pressure_Actual") +
