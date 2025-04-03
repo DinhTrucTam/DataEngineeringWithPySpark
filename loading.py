@@ -1,23 +1,25 @@
 from pyspark.sql import SparkSession
-from pyspark.sql.functions import avg, col, to_timestamp, year, month, dayofmonth, hour, minute, monotonically_increasing_id
-from pyspark.sql.functions import monotonically_increasing_id
+from pyspark.sql.functions import lit, col, to_timestamp, year, month, dayofmonth, hour, minute
 
 spark = SparkSession.builder \
     .appName("PostgreSQL Connection with PySpark") \
-    .config("spark.jars", "/F:/PostgreSQL/JDBC/postgresql-42.7.2.jar") \
+    .config("spark.jars", "/C:/Program Files (x86)/PostgreSQL/pgJDBC/postgresql-42.7.2.jar") \
     .getOrCreate()
     
 pg_url = "jdbc:postgresql://localhost:5432/DW"
 
 pg_properties = {
     "user": "postgres",
-    "password": "tructam2992",
+    "password": "tamdinh@2002",
     "driver": "org.postgresql.Driver"
 }
 
 # Load CSV file into PySpark DataFrame
-df_sample = spark.read.csv('/F:/DE/DataEngineeringWithPySpark/final_output/part-00000-3dc365fa-8007-408c-86d8-f667ea4db738-c000.csv', header=True, inferSchema=True)
+df_sample = spark.read.csv('/C:/Users/tom/Desktop/DE/DataEngineeringWithPySpark/final_output/part-00000-f0289e92-1472-4e51-b8c4-e83b101ab0b6-c000.csv', header=True, inferSchema=True)
 df_sample.printSchema()
+
+df_sample2 = spark.read.csv('/C:/Users/tom/Desktop/machine.csv', header=True, inferSchema=True)
+df_sample2.printSchema()
 
 # Selecting a single record for verification
 #df_sample = df.limit(1)
@@ -40,46 +42,56 @@ df_ambient = df_sample.select(
 )
 df_ambient.write.jdbc(pg_url, "Dim_Ambient_Conditions", mode="append", properties=pg_properties)
 
+# Loading Machine
+df_machine = df_sample2.select(
+    col("Machine_Id").alias("machine_id"),
+    col("Machine_Name").alias("machine_name"),
+    col("Machine_Type").alias("machine_type"),
+    col("Stage").alias("stage"),
+    to_timestamp(col("Last_Maintenance_Date"), "yyyy-MM-dd'T'HH:mm:ss.SSSXXX").alias("last_maintenance_date")
+)
+df_machine.write.jdbc(pg_url, "Dim_Machine", mode="append", properties=pg_properties)
+
 # Loading Machine 1 - Motor
 df_machine1_motor = df_sample.select(
     col("Machine1_MotorAmperage_U_Actual").alias("motor_amperage"),
     col("Machine1_MotorRPM_C_Actual").alias("motor_rpm")
-)
+).withColumn("machine_id", lit(1))
 df_machine1_motor.write.jdbc(pg_url, "Dim_Machine1_Motor", mode="append", properties=pg_properties)
 
 # Loading Machine 2 - Motor
 df_machine2_motor = df_sample.select(
     col("Machine2_MotorAmperage_U_Actual").alias("motor_amperage"),
     col("Machine2_MotorRPM_C_Actual").alias("motor_rpm")
-)
+).withColumn("machine_id", lit(2))
 df_machine2_motor.write.jdbc(pg_url, "Dim_Machine2_Motor", mode="append", properties=pg_properties)
 
 # Loading Machine 3 - Motor
 df_machine3_motor = df_sample.select(
     col("Machine3_MotorAmperage_U_Actual").alias("motor_amperage"),
     col("Machine3_MotorRPM_C_Actual").alias("motor_rpm")
-)
+).withColumn("machine_id", lit(3))
 df_machine3_motor.write.jdbc(pg_url, "Dim_Machine3_Motor", mode="append", properties=pg_properties)
 
 # Loading Machine 1 - Zone Temperature
 df_machine1_zone_temp = df_sample.select(
     col("Machine1_Zone1Temperature_C_Actual").alias("zone1_temperature"),
     col("Machine1_Zone2Temperature_C_Actual").alias("zone2_temperature")
-)
+).withColumn("machine_id", lit(1))
 df_machine1_zone_temp.write.jdbc(pg_url, "Dim_Machine1_Zone_Temperature", mode="append", properties=pg_properties)
 
 # Loading Machine 2 - Zone Temperature
 df_machine2_zone_temp = df_sample.select(
     col("Machine2_Zone1Temperature_C_Actual").alias("zone1_temperature"),
     col("Machine2_Zone2Temperature_C_Actual").alias("zone2_temperature")
-)
+).withColumn("machine_id", lit(2))
 df_machine2_zone_temp.write.jdbc(pg_url, "Dim_Machine2_Zone_Temperature", mode="append", properties=pg_properties)
 
 # Loading Machine 3 - Zone Temperature
 df_machine3_zone_temp = df_sample.select(
     col("Machine3_Zone1Temperature_C_Actual").alias("zone1_temperature"),
     col("Machine3_Zone2Temperature_C_Actual").alias("zone2_temperature")
-)
+).withColumn("machine_id", lit(3))
 df_machine3_zone_temp.write.jdbc(pg_url, "Dim_Machine3_Zone_Temperature", mode="append", properties=pg_properties)
 
 # Loading Machine 1 - Material Properties
@@ -88,7 +100,7 @@ df_machine1_material_properties = df_sample.select(
     col("Machine1_RawMaterial_Property2").alias("raw_material_property2"),
     col("Machine1_RawMaterial_Property3").alias("raw_material_property3"),
     col("Machine1_RawMaterial_Property4").alias("raw_material_property4")
-)
+).withColumn("machine_id", lit(1))
 df_machine1_material_properties.write.jdbc(pg_url, "Dim_Machine1_Material_Properties", mode="append", properties=pg_properties)
 
 # Loading Machine 2 - Material Properties
@@ -97,7 +109,7 @@ df_machine2_material_properties = df_sample.select(
     col("Machine2_RawMaterial_Property2").alias("raw_material_property2"),
     col("Machine2_RawMaterial_Property3").alias("raw_material_property3"),
     col("Machine2_RawMaterial_Property4").alias("raw_material_property4")
-)
+).withColumn("machine_id", lit(2))
 df_machine2_material_properties.write.jdbc(pg_url, "Dim_Machine2_Material_Properties", mode="append", properties=pg_properties)
 
 # Loading Machine 3 - Material Properties
@@ -106,7 +118,7 @@ df_machine3_material_properties = df_sample.select(
     col("Machine3_RawMaterial_Property2").alias("raw_material_property2"),
     col("Machine3_RawMaterial_Property3").alias("raw_material_property3"),
     col("Machine3_RawMaterial_Property4").alias("raw_material_property4")
-)
+).withColumn("machine_id", lit(3))
 df_machine3_material_properties.write.jdbc(pg_url, "Dim_Machine3_Material_Properties", mode="append", properties=pg_properties)
 
 # Loading Combiner - Temperature
@@ -165,7 +177,7 @@ df_machine4_temperature_pressure = df_sample.select(
     col("Machine4_Temperature3_C_Actual").alias("temperature3"),
     col("Machine4_Temperature4_C_Actual").alias("temperature4"),
     col("Machine4_Temperature5_C_Actual").alias("temperature5")
-)
+).withColumn("machine_id", lit(4))
 df_machine4_temperature_pressure.write.jdbc(pg_url, "Dim_Machine4_Temperature_Pressure", mode="append", properties=pg_properties)
 
 # Loading Machine 5 - Temperature
@@ -176,7 +188,7 @@ df_machine5_temperature = df_sample.select(
     col("Machine5_Temperature4_C_Actual").alias("temperature4"),
     col("Machine5_Temperature5_C_Actual").alias("temperature5"),
     col("Machine5_Temperature6_C_Actual").alias("temperature6")
-)
+).withColumn("machine_id", lit(5))
 df_machine5_temperature.write.jdbc(pg_url, "Dim_Machine5_Temperature", mode="append", properties=pg_properties)
 
 # Loading Exit Temperature
