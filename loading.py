@@ -15,16 +15,24 @@ pg_properties = {
 }
 
 # Load CSV file into PySpark DataFrame
-df_sample = spark.read.csv('/C:/Users/tom/Desktop/DE/DataEngineeringWithPySpark/final_output/part-00000-f0289e92-1472-4e51-b8c4-e83b101ab0b6-c000.csv', header=True, inferSchema=True)
-df_sample.printSchema()
 
-df_sample2 = spark.read.csv('/C:/Users/tom/Desktop/machine.csv', header=True, inferSchema=True)
-df_sample2.printSchema()
+# df_sample2 = spark.read.csv('/C:/Users/tom/Desktop/machine.csv', header=True, inferSchema=True)
+# df_sample2.printSchema()
 
-# Selecting a single record for verification
-#df_sample = df.limit(1)
+df_sample = spark.read.csv('/C:/Users/tom/Desktop/DE/DataEngineeringWithPySpark/final_output_1/part-*.csv', header=True, inferSchema=True)
+print("Load all files successfully")
 
 # Mapping the DataFrame to PostgreSQL Table
+# # Loading Machine
+# df_machine = df_sample2.select(
+#     col("Machine_Id").alias("machine_id"),
+#     col("Machine_Name").alias("machine_name"),
+#     col("Machine_Type").alias("machine_type"),
+#     col("Stage").alias("stage"),
+#     to_timestamp(col("Last_Maintenance_Date"), "yyyy-MM-dd'T'HH:mm:ss.SSSXXX").alias("last_maintenance_date")
+# )
+# df_machine.write.jdbc(pg_url, "Dim_Machine", mode="append", properties=pg_properties)
+
 df_time = df_sample.select(
     to_timestamp(col("time_stamp"), "yyyy-MM-dd'T'HH:mm:ss.SSSXXX").alias("time_stamp"),
     year(to_timestamp(col("time_stamp"), "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")).alias("year"),
@@ -41,16 +49,6 @@ df_ambient = df_sample.select(
     col("AmbientConditions_AmbientTemperature_U_Actual").alias("ambient_temperature")
 )
 df_ambient.write.jdbc(pg_url, "Dim_Ambient_Conditions", mode="append", properties=pg_properties)
-
-# Loading Machine
-df_machine = df_sample2.select(
-    col("Machine_Id").alias("machine_id"),
-    col("Machine_Name").alias("machine_name"),
-    col("Machine_Type").alias("machine_type"),
-    col("Stage").alias("stage"),
-    to_timestamp(col("Last_Maintenance_Date"), "yyyy-MM-dd'T'HH:mm:ss.SSSXXX").alias("last_maintenance_date")
-)
-df_machine.write.jdbc(pg_url, "Dim_Machine", mode="append", properties=pg_properties)
 
 # Loading Machine 1 - Motor
 df_machine1_motor = df_sample.select(

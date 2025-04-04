@@ -20,7 +20,7 @@ spark.conf.set("spark.sql.debug.maxToStringFields", "100")
 print("Data Loading...")
 
 # Load dataset
-file_path = "data_generated.csv"
+file_path = "data_generated_1.csv"
 df = spark.read.csv(file_path, header=True, inferSchema=True)
 
 # Check if DataFrame is empty
@@ -68,7 +68,7 @@ df.cache()
 df.count()
 
 # Save cleaned data to CSV
-output_path = "final_output"
+output_path = "final_output_1"
 df.write.csv(output_path, header=True, mode="overwrite")
 
 print("Process Completed Successfully.")

@@ -1,12 +1,14 @@
 import pandas as pd
 import numpy as np
 import re
-from datetime import datetime, timedelta
+from datetime import datetime
+from datetime import date
+
 from Summarizing_Current_Dataset import summarize_dataset
 
 # Step 1: Create new time_stamp values from "3/6/2019 00:00:00 AM" to "3/6/2019 11:59:59 PM"
-start_time = datetime(2019, 3, 6, 0, 0, 0)  # "3/6/2019 00:00:00 AM"
-end_time = datetime(2019, 3, 6, 23, 59, 59)  # "3/6/2019 11:59:59 PM"
+start_time = datetime(2025, 7, 4, 0, 0, 0)  # "1/4/2025 00:00:00 AM"
+end_time = datetime(2025, 7, 4, 23, 59, 59)  # "1/4/2025 11:59:59 PM"
 time_stamps = pd.date_range(start=start_time, end=end_time, freq='S')
 
 # Define the file path
@@ -119,5 +121,14 @@ new_data_df['time_stamp'] = time_stamps
 # Add a "No." column at the beginning of the dataset
 new_data_df.insert(0, 'No', range(1, len(new_data_df) + 1))
 
-new_data_df.to_csv('data_generated.csv', index=False)
-print("Data saved to 'data_generated.csv'.")
+# new_data_df.to_csv('data_generated_1.csv', index=False)
+# print("Data saved to 'data_generated.csv'.")
+
+today_date = date(2025, 7, 4)
+
+# Format the date into a string
+file_name = f"source_data_manufacturing_{today_date}.csv"
+
+# Save the DataFrame to the dynamically generated file
+new_data_df.to_csv(file_name, index=False)
+print(f"Data saved to '{file_name}'.")
