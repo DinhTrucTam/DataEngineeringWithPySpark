@@ -3,35 +3,35 @@ from pyspark.sql.functions import lit, col, to_timestamp, year, month, dayofmont
 
 spark = SparkSession.builder \
     .appName("PostgreSQL Connection with PySpark") \
-    .config("spark.jars", "/C:/Program Files (x86)/PostgreSQL/pgJDBC/postgresql-42.7.2.jar") \
+    .config("spark.jars", "/F:/PostgreSQL/JDBC/postgresql-42.7.2.jar") \
     .getOrCreate()
     
 pg_url = "jdbc:postgresql://localhost:5432/DW"
 
 pg_properties = {
     "user": "postgres",
-    "password": "tamdinh@2002",
+    "password": "tructam2992",
     "driver": "org.postgresql.Driver"
 }
 
 # Load CSV file into PySpark DataFrame
 
-# df_sample2 = spark.read.csv('/C:/Users/tom/Desktop/machine.csv', header=True, inferSchema=True)
-# df_sample2.printSchema()
+df_sample2 = spark.read.csv('/F:/DE/DataEngineeringWithPySpark/machine.csv', header=True, inferSchema=True)
+df_sample2.printSchema()
 
-df_sample = spark.read.csv('/C:/Users/tom/Desktop/DE/DataEngineeringWithPySpark/final_output_1/part-*.csv', header=True, inferSchema=True)
+df_sample = spark.read.csv('/F:/DE/DataEngineeringWithPySpark/after_ETL/part-*.csv', header=True, inferSchema=True)
 print("Load all files successfully")
 
 # Mapping the DataFrame to PostgreSQL Table
 # # Loading Machine
-# df_machine = df_sample2.select(
-#     col("Machine_Id").alias("machine_id"),
-#     col("Machine_Name").alias("machine_name"),
-#     col("Machine_Type").alias("machine_type"),
-#     col("Stage").alias("stage"),
-#     to_timestamp(col("Last_Maintenance_Date"), "yyyy-MM-dd'T'HH:mm:ss.SSSXXX").alias("last_maintenance_date")
-# )
-# df_machine.write.jdbc(pg_url, "Dim_Machine", mode="append", properties=pg_properties)
+df_machine = df_sample2.select(
+    col("Machine_Id").alias("machine_id"),
+    col("Machine_Name").alias("machine_name"),
+    col("Machine_Type").alias("machine_type"),
+    col("Stage").alias("stage"),
+    to_timestamp(col("Last_Maintenance_Date"), "yyyy-MM-dd'T'HH:mm:ss.SSSXXX").alias("last_maintenance_date")
+)
+df_machine.write.jdbc(pg_url, "Dim_Machine", mode="append", properties=pg_properties)
 
 df_time = df_sample.select(
     to_timestamp(col("time_stamp"), "yyyy-MM-dd'T'HH:mm:ss.SSSXXX").alias("time_stamp"),
@@ -401,4 +401,4 @@ df_second_stage_output = df_sample.select(
 )
 df_second_stage_output.write.jdbc(pg_url, "Fact_Stage2_Output", mode="append", properties=pg_properties)
 
-print("Single record inserted into PostgreSQL for verification.")
+print("Data loaded successfully!!!")

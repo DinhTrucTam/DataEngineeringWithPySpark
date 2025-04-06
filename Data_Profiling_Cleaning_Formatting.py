@@ -10,8 +10,8 @@ sys.stderr = sys.stdout
 # Initialize Spark session with increased memory
 spark = SparkSession.builder \
     .appName("DataProfiling") \
-    .config("spark.driver.memory", "4g") \
-    .config("spark.executor.memory", "4g") \
+    .config("spark.driver.memory", "2g") \
+    .config("spark.executor.memory", "2g") \
     .getOrCreate()
 
 # Adjust Spark settings
@@ -20,7 +20,7 @@ spark.conf.set("spark.sql.debug.maxToStringFields", "100")
 print("Data Loading...")
 
 # Load dataset
-file_path = "data_generated_1.csv"
+file_path = "source_data_manufacturing_2025-07-04.csv"
 df = spark.read.csv(file_path, header=True, inferSchema=True)
 
 # Check if DataFrame is empty
@@ -68,7 +68,7 @@ df.cache()
 df.count()
 
 # Save cleaned data to CSV
-output_path = "final_output_1"
+output_path = "after_ETL"
 df.write.csv(output_path, header=True, mode="overwrite")
 
 print("Process Completed Successfully.")
