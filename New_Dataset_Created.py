@@ -122,9 +122,14 @@ new_data_df['time_stamp'] = time_stamps
 # Add a "No." column at the beginning of the dataset
 new_data_df.insert(0, 'No', range(1, len(new_data_df) + 1))
 
-# Format the date into a string
-file_name = f"source_data_manufacturing_{today_date}.csv"
-
-# Save the DataFrame to the dynamically generated file
-new_data_df.to_csv(file_name, index=False)
-print(f"Data saved to '{file_name}'.")
+# Split the DataFrame into 5 equal parts
+split_size = len(new_data_df) // 5
+for i in range(5):
+    start_idx = i * split_size
+    end_idx = (i + 1) * split_size if i < 4 else len(new_data_df)
+    
+    # Split the DataFrame into 5 parts and save them to separate CSV files
+    part_df = new_data_df.iloc[start_idx:end_idx]
+    file_name = f"source_data_manufacturing_part_{i + 1}_{today_date}.csv"
+    part_df.to_csv(file_name, index=False)
+    print(f"Data saved to '{file_name}'.")
